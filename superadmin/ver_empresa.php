@@ -1,23 +1,34 @@
-<!-- superadmin/ver_empresa.php -->
 <?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'superadmin') {
+    header("Location: ../login.php");
+    exit;
+}
+
 require_once '../includes/db.php';
 
-$id = $_GET['id'] ?? 0;
+// Validar el ID de empresa recibido por GET
+$empresa_id = $_GET['id'] ?? null;
+if (!$empresa_id) {
+    die("ID de empresa no válido.");
+}
 
 // Obtener datos de la empresa
 $stmt = $conn->prepare("SELECT * FROM empresas WHERE id = ?");
-$stmt->execute([$id]);
+$stmt->execute([$empresa_id]);
 $empresa = $stmt->fetch();
 
 if (!$empresa) {
-    die("Empresa no encontrada");
+    die("Empresa no encontrada.");
 }
 
 // Obtener locales
-$stmtLocales = $conn->prepare("SELECT * FROM locales WHERE empresa_id = ?");
-$stmtLocales->execute([$id]);
-$locales = $stmtLocales->fetchAll();
+$stmt = $conn->prepare("SELECT * FROM locales WHERE empresa_id = ?");
+$stmt->execute([$empresa_id]);
+$locales = $stmt->fetchAll();
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">

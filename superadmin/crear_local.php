@@ -1,4 +1,11 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'superadmin') {
+    header("Location: ../login.php");
+    exit;
+}
+
 require_once '../includes/db.php';
 
 $empresa_id = $_POST['empresa_id'];

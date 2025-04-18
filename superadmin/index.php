@@ -1,20 +1,30 @@
 <!-- superadmin/index.php -->
 <?php
+if (session_status() === PHP_SESSION_NONE)
+    session_start();
+
+if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'superadmin') {
+    header("Location: ../login.php");
+    exit;
+}
+
 require_once '../includes/db.php';
-session_start();
-// Validación básica (puedes mejorarla con login luego)
 ?>
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Superadmin - Panel</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gray-100 p-8">
     <div class="max-w-6xl mx-auto bg-white p-6 rounded-xl shadow-md">
-        <h1 class="text-2xl font-bold mb-6">👑 Panel de Superadmin</h1>
+        <?php include '../includes/header.php'; ?>
+
+
 
         <!-- Crear empresa -->
         <div class="mb-8">
@@ -31,7 +41,8 @@ session_start();
                     <label class="block mb-1">Contraseña</label>
                     <input type="password" name="password" class="w-full p-2 border rounded" required>
                 </div>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Agregar</button>
+                <button type="submit"
+                    class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Agregar</button>
             </form>
         </div>
 
@@ -69,4 +80,5 @@ session_start();
         </div>
     </div>
 </body>
+
 </html>
