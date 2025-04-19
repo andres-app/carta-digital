@@ -7,6 +7,7 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'superadmin') {
 }
 
 require_once '../includes/db.php';
+require_once '../includes/helpers.php';
 
 $empresa_id = $_POST['empresa_id'];
 $nombre = $_POST['nombre'];
