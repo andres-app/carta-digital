@@ -25,37 +25,41 @@ $categorias = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-white text-gray-800 font-sans">
-    <div class="max-w-3xl mx-auto p-6">
-        <!-- Nombre del local -->
-        <h1 class="text-3xl font-bold text-center mb-6"><?= htmlspecialchars($local['nombre']) ?></h1>
+<body class="bg-gradient-to-b from-white to-gray-100 min-h-screen text-gray-800 font-sans">
+    <!-- Sticky header -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm p-4">
+        <h1 class="text-2xl font-bold text-center text-indigo-600"><?= htmlspecialchars($local['nombre']) ?></h1>
+    </header>
 
+    <main class="max-w-4xl mx-auto p-6 pt-8">
         <!-- Carta por categorías -->
         <?php foreach ($categorias as $cat): ?>
-            <div class="mb-8">
-                <h2 class="text-2xl font-semibold mb-2" style="color: <?= $cat['color'] ?>"><?= htmlspecialchars($cat['nombre']) ?></h2>
-                <div class="space-y-4">
+            <div class="mb-10">
+                <h2 class="text-2xl font-extrabold text-gray-700 border-b-2 border-indigo-400 pb-2 mb-6"><?= htmlspecialchars($cat['nombre']) ?></h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <?php
                     $stmtPlatos = $conn->prepare("SELECT * FROM platos WHERE categoria_id = ?");
                     $stmtPlatos->execute([$cat['id']]);
                     $platos = $stmtPlatos->fetchAll();
                     foreach ($platos as $plato):
                     ?>
-                        <div class="p-4 border rounded-lg shadow-sm hover:shadow-md transition">
-                            <div class="flex justify-between items-center">
+                        <div class="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
+                            <div class="flex flex-col justify-between h-full">
                                 <div>
-                                    <h3 class="text-lg font-bold"><?= htmlspecialchars($plato['nombre']) ?></h3>
+                                    <h3 class="text-lg font-bold mb-2 text-gray-900"><?= htmlspecialchars($plato['nombre']) ?></h3>
                                     <?php if ($plato['descripcion']): ?>
-                                        <p class="text-sm text-gray-500"><?= htmlspecialchars($plato['descripcion']) ?></p>
+                                        <p class="text-sm text-gray-600 mb-4"><?= htmlspecialchars($plato['descripcion']) ?></p>
                                     <?php endif; ?>
                                 </div>
-                                <span class="text-green-600 font-bold text-lg">S/ <?= number_format($plato['precio'], 2) ?></span>
+                                <div class="flex justify-end">
+                                    <span class="text-green-600 font-bold text-lg">S/ <?= number_format($plato['precio'], 2) ?></span>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
         <?php endforeach; ?>
-    </div>
+    </main>
 </body>
 </html>
