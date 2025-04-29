@@ -43,6 +43,7 @@ $disponibles = $limite - $total_locales;
                 <h3 class="font-semibold text-lg"><?= htmlspecialchars($local['nombre']) ?></h3>
                 <p class="text-sm text-gray-600">Slug: <?= htmlspecialchars($local['slug']) ?></p>
                 <div class="mt-3 flex justify-between items-center">
+                <a href="../admin/generar_qr.php?local_id=<?= $local['id'] ?>" target="_blank" class="text-pink-600 hover:underline">Descargar QR PDF</a>
                     <a href="./editar_carta.php?local_id=<?= $local['id'] ?>" class="text-blue-600 hover:underline">Editar carta</a>
                     <a href="/carta-digital/public/carta.php?slug=<?= urlencode($local['slug']) ?>" target="_blank" class="text-green-600 hover:underline">Ver carta</a>
                 </div>
