@@ -14,24 +14,39 @@ if (isset($_SESSION['usuario_id'])) {
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>TuCarta | Iniciar Sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex justify-center items-center h-screen">
-    <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
-        
-        <!-- Logo de TuCarta -->
-        <div class="mb-4">
-            <img src="./assets/img/logo-tucarta.png" alt="Logo TuCarta" class="mx-auto w-40">
+<body class="bg-gradient-to-b from-indigo-100 to-white min-h-screen flex items-center justify-center">
+
+    <div class="bg-white/60 backdrop-blur-md shadow-xl p-10 rounded-3xl w-full max-w-md text-center">
+        <!-- Logo -->
+        <div class="flex justify-center mb-6">
+            <img src="./assets/img/logo-tucarta2.png" alt="TuCarta Logo" class="w-48 h-48 object-contain">
         </div>
 
-        <h1 class="text-2xl font-bold mb-6">🔐 Iniciar Sesión</h1>
+        <!-- Slogan -->
+        <p class="text-gray-600 text-sm mb-8 italic">Tu carta digital en un solo clic</p>
 
-        <form method="POST" action="procesar_login.php" class="space-y-4 text-left">
-            <input type="email" name="email" placeholder="Correo" class="w-full p-2 border rounded" required>
-            <input type="password" name="password" placeholder="Contraseña" class="w-full p-2 border rounded" required>
-            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Ingresar</button>
+        <!-- Formulario -->
+        <form method="POST" action="procesar_login.php" class="space-y-5 text-left">
+            <div>
+                <label class="block mb-1 font-semibold text-gray-700 text-sm">Correo electrónico</label>
+                <input type="email" name="email" placeholder="correo@ejemplo.com" required
+                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none">
+            </div>
+
+            <div>
+                <label class="block mb-1 font-semibold text-gray-700 text-sm">Contraseña</label>
+                <input type="password" name="password" placeholder="********" required
+                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition">Iniciar Sesión</button>
         </form>
     </div>
+
 </body>
 </html>
