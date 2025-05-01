@@ -2,26 +2,33 @@
 require_once 'includes/db.php';
 session_start();
 
-$email = $_POST['email'];
-$password = $_POST['password'];
+$email = trim($_POST['email'] ?? '');
+$password = trim($_POST['password'] ?? '');
 
-// Buscar al usuario por email
+// Validar campos vacíos
+if (empty($email) || empty($password)) {
+    $error = "Por favor ingresa tu correo y contraseña.";
+    include 'login.php';
+    exit;
+}
+
+// Buscar usuario
 $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = ?");
 $stmt->execute([$email]);
 $usuario = $stmt->fetch();
 
-if ($usuario && $password === $usuario['password']) { // Comparación simple (sin hash aún)
+// Comparar credenciales (modo simple)
+if ($usuario && $password === $usuario['password']) {
     $_SESSION['usuario_id'] = $usuario['id'];
     $_SESSION['nombre'] = $usuario['nombre'];
     $_SESSION['rol'] = $usuario['rol'];
     $_SESSION['empresa_id'] = $usuario['empresa_id'];
 
-    if ($usuario['rol'] === 'superadmin') {
-        header("Location: superadmin/index.php");
-    } elseif ($usuario['rol'] === 'admin') {
-        header("Location: admin/dashboard.php");
-    }
+    $redirect = $usuario['rol'] === 'superadmin' ? 'superadmin/index.php' : 'admin/dashboard.php';
+    header("Location: $redirect");
     exit;
 } else {
-    echo "Credenciales inválidas. <a href='login.php'>Intentar de nuevo</a>";
+    $error = "Credenciales inválidas. Intenta nuevamente.";
+    include 'login.php';
+    exit;
 }

@@ -1,5 +1,6 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE)
+    session_start();
 if (isset($_SESSION['usuario_id'])) {
     if ($_SESSION['rol'] === 'superadmin') {
         header("Location: superadmin/index.php");
@@ -12,12 +13,14 @@ if (isset($_SESSION['usuario_id'])) {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>TuCarta | Iniciar Sesión</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-gradient-to-b from-indigo-100 to-white min-h-screen flex items-center justify-center">
 
     <div class="bg-white/60 backdrop-blur-md shadow-xl p-10 rounded-3xl w-full max-w-md text-center">
@@ -27,9 +30,16 @@ if (isset($_SESSION['usuario_id'])) {
         </div>
 
         <!-- Slogan -->
-        <p class="text-gray-600 text-sm mb-8 italic">Tu carta digital en un solo clic</p>
+        <p class="text-gray-600 text-sm mb-6 italic">Tu carta digital en un solo clic</p>
 
-        <!-- Formulario -->
+        <!-- ⚠️ Alerta de error (si existe) -->
+        <?php if (!empty($error)): ?>
+            <div class="bg-red-100 text-red-700 px-4 py-2 rounded mb-6 text-sm text-center animate-pulse">
+                <?= $error ?>
+            </div>
+        <?php endif; ?>
+
+        <!-- Formulario de login -->
         <form method="POST" action="procesar_login.php" class="space-y-5 text-left">
             <div>
                 <label class="block mb-1 font-semibold text-gray-700 text-sm">Correo electrónico</label>
@@ -39,14 +49,32 @@ if (isset($_SESSION['usuario_id'])) {
 
             <div>
                 <label class="block mb-1 font-semibold text-gray-700 text-sm">Contraseña</label>
-                <input type="password" name="password" placeholder="********" required
-                    class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none">
+                <div class="relative">
+                    <input type="password" name="password" id="password" placeholder="********" required
+                        class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-400 outline-none pr-10">
+                    <button type="button" onclick="togglePassword()"
+                        class="absolute inset-y-0 right-2 flex items-center text-gray-500 text-sm focus:outline-none">
+                        👁️
+                    </button>
+                </div>
             </div>
 
+
             <button type="submit"
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition">Iniciar Sesión</button>
+                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 rounded-lg transition">
+                Iniciar Sesión
+            </button>
         </form>
     </div>
 
+    <script>
+        function togglePassword() {
+            const input = document.getElementById("password");
+            input.type = input.type === "password" ? "text" : "password";
+        }
+    </script>
+
+
 </body>
+
 </html>
