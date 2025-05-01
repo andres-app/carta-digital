@@ -24,6 +24,7 @@ if (!$empresa) {
     die("Empresa no encontrada.");
 }
 
+
 // Obtener locales
 $stmt = $conn->prepare("SELECT * FROM locales WHERE empresa_id = ?");
 $stmt->execute([$empresa_id]);
@@ -69,6 +70,17 @@ $locales = $stmt->fetchAll();
             </div>
         </form>
 
+        <?php if (!empty($_SESSION['mensaje_error'])): ?>
+            <div id="mensaje-alerta" class="bg-red-100 text-red-700 px-4 py-2 rounded mb-6 text-sm shadow">
+                <?= $_SESSION['mensaje_error'];
+                unset($_SESSION['mensaje_error']); ?>
+            </div>
+        <?php elseif (!empty($_SESSION['mensaje_exito'])): ?>
+            <div id="mensaje-alerta" class="bg-green-100 text-green-700 px-4 py-2 rounded mb-6 text-sm shadow">
+                <?= $_SESSION['mensaje_exito'];
+                unset($_SESSION['mensaje_exito']); ?>
+            </div>
+        <?php endif; ?>
 
         <!-- Crear nuevo local -->
         <form method="POST" action="crear_local.php" class="mb-8 flex gap-4 items-end">
@@ -108,6 +120,17 @@ $locales = $stmt->fetchAll();
             </tbody>
         </table>
     </div>
+
+    <script>
+        setTimeout(() => {
+            const alerta = document.getElementById("mensaje-alerta");
+            if (alerta) {
+                alerta.classList.add("opacity-0", "transition", "duration-500");
+                setTimeout(() => alerta.remove(), 500); // quitarlo del DOM después de desvanecerse
+            }
+        }, 4000);
+    </script>
+
 </body>
 
 </html>

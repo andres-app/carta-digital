@@ -10,29 +10,38 @@ require_once '../includes/db.php';
 require_once '../includes/helpers.php';
 
 $empresa_id = $_SESSION['empresa_id'];
-$nombre = $_POST['nombre'];
-$slug = $_POST['slug'];
+$nombre = trim($_POST['nombre']);
+$slug = trim($_POST['slug']);
 
-// 1. Obtener plan de la empresa
+// Validar duplicado de slug
+$stmt = $conn->prepare("SELECT COUNT(*) FROM locales WHERE empresa_id = ? AND slug = ?");
+$stmt->execute([$empresa_id, $slug]);
+if ($stmt->fetchColumn() > 0) {
+    $_SESSION['mensaje_error'] = "El slug <strong>$slug</strong> ya existe en tus locales. Usa uno diferente.";
+    header("Location: dashboard.php");
+    exit;
+}
+
+// Validar límite de locales
 $stmt = $conn->prepare("SELECT plan FROM empresas WHERE id = ?");
 $stmt->execute([$empresa_id]);
 $plan = $stmt->fetchColumn();
+$limite = obtenerLimiteLocalesPorPlan($plan);
 
-// 2. Verificar cuántos locales tiene
 $stmt = $conn->prepare("SELECT COUNT(*) FROM locales WHERE empresa_id = ?");
 $stmt->execute([$empresa_id]);
 $total_locales = $stmt->fetchColumn();
 
-// 3. Validar límite
-$limite = obtenerLimiteLocalesPorPlan($plan);
-
 if ($total_locales >= $limite) {
-    die("Has alcanzado el límite de locales para tu plan ($plan).");
+    $_SESSION['mensaje_error'] = "Has alcanzado el límite de locales para el plan <strong>$plan</strong>.";
+    header("Location: dashboard.php");
+    exit;
 }
 
-// 4. Insertar nuevo local
+// Insertar
 $stmt = $conn->prepare("INSERT INTO locales (empresa_id, nombre, slug) VALUES (?, ?, ?)");
 $stmt->execute([$empresa_id, $nombre, $slug]);
 
+$_SESSION['mensaje_exito'] = "El local <strong>$nombre</strong> fue creado exitosamente.";
 header("Location: dashboard.php");
 exit;
