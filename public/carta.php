@@ -11,7 +11,6 @@ if (!$local) {
     die("Carta no encontrada");
 }
 
-// Obtener categorías
 $stmt = $conn->prepare("SELECT * FROM categorias WHERE local_id = ?");
 $stmt->execute([$local['id']]);
 $categorias = $stmt->fetchAll();
@@ -25,40 +24,44 @@ $categorias = $stmt->fetchAll();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gradient-to-b from-white to-gray-100 min-h-screen text-gray-800 font-sans">
-    <!-- Sticky header -->
-    <header class="sticky top-0 z-50 bg-white shadow-sm p-4">
-        <h1 class="text-2xl font-bold text-center text-indigo-600"><?= htmlspecialchars($local['nombre']) ?></h1>
+<body class="bg-white text-gray-800 font-sans">
+
+    <!-- Encabezado Fijo -->
+    <header class="sticky top-0 bg-white shadow-md z-50 p-4 text-center">
+        <h1 class="text-2xl font-extrabold text-indigo-600"><?= htmlspecialchars($local['nombre']) ?></h1>
     </header>
 
-    <main class="max-w-4xl mx-auto p-6 pt-8">
-        <!-- Carta por categorías -->
+    <main class="max-w-7xl mx-auto px-4 py-8">
         <?php foreach ($categorias as $cat): ?>
-            <div class="mb-10">
-                <h2 class="text-2xl font-extrabold text-gray-700 border-b-2 border-indigo-400 pb-2 mb-6"><?= htmlspecialchars($cat['nombre']) ?></h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6"><?= htmlspecialchars($cat['nombre']) ?></h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     <?php
                     $stmtPlatos = $conn->prepare("SELECT * FROM platos WHERE categoria_id = ?");
                     $stmtPlatos->execute([$cat['id']]);
                     $platos = $stmtPlatos->fetchAll();
+
                     foreach ($platos as $plato):
+                        $img_url = isset($plato['imagen']) && !empty($plato['imagen']) 
+                            ? htmlspecialchars($plato['imagen']) 
+                            : 'https://via.placeholder.com/400x300.png?text=Producto';
                     ?>
-                        <div class="bg-white p-4 rounded-xl shadow hover:shadow-lg transition">
-                            <div class="flex flex-col justify-between h-full">
-                                <div>
-                                    <h3 class="text-lg font-bold mb-2 text-gray-900"><?= htmlspecialchars($plato['nombre']) ?></h3>
-                                    <?php if ($plato['descripcion']): ?>
-                                        <p class="text-sm text-gray-600 mb-4"><?= htmlspecialchars($plato['descripcion']) ?></p>
-                                    <?php endif; ?>
-                                </div>
-                                <div class="flex justify-end">
-                                    <span class="text-green-600 font-bold text-lg">S/ <?= number_format($plato['precio'], 2) ?></span>
+                        <div class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition relative group">
+                            <img src="<?= $img_url ?>" alt="<?= htmlspecialchars($plato['nombre']) ?>" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <h3 class="text-lg font-bold text-gray-900 mb-1"><?= htmlspecialchars($plato['nombre']) ?></h3>
+                                <?php if (!empty($plato['descripcion'])): ?>
+                                    <p class="text-sm text-gray-600 mb-3"><?= htmlspecialchars($plato['descripcion']) ?></p>
+                                <?php endif; ?>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-indigo-600 font-bold text-lg">S/ <?= number_format($plato['precio'], 2) ?></span>
+                                    <button class="bg-indigo-500 text-white rounded-full w-9 h-9 flex items-center justify-center text-xl hover:bg-indigo-600 transition shadow-md">+</button>
                                 </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
-            </div>
+            </section>
         <?php endforeach; ?>
     </main>
 </body>
