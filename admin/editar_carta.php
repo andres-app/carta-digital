@@ -69,27 +69,37 @@ $categorias = $stmt->fetchAll();
                             <input type="hidden" name="id" value="<?= $cat['id'] ?>">
                         </form>
                     </div>
-
-                    <!-- Lista de platos -->
                     <?php
                     $stmtPlatos = $conn->prepare("SELECT * FROM platos WHERE categoria_id = ?");
                     $stmtPlatos->execute([$cat['id']]);
                     $platos = $stmtPlatos->fetchAll();
                     ?>
-
                     <ul class="space-y-2">
                         <?php foreach ($platos as $plato): ?>
                             <li class="flex flex-col md:flex-row md:justify-between md:items-center border-b pb-2 gap-2">
                                 <div>
                                     <strong><?= htmlspecialchars($plato['nombre']) ?></strong><br>
                                     <small class="text-gray-500"><?= htmlspecialchars($plato['descripcion']) ?></small>
+                                    <?php if ($plato['imagen']): ?>
+                                        <div class="mt-2">
+                                            <img src="/carta-digital/<?= htmlspecialchars($plato['imagen']) ?>" alt="Imagen de <?= htmlspecialchars($plato['nombre']) ?>" class="w-24 h-20 object-cover rounded border">
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
-                                <div class="text-right">
-                                    <div>S/ <?= number_format($plato['precio'], 2) ?></div>
-                                    <form method="POST" action="acciones_plato.php" class="inline">
-                                        <input type="hidden" name="id" value="<?= $plato['id'] ?>">
-                                        <button type="submit" name="accion" value="eliminar" class="text-red-600 hover:underline text-sm">Eliminar</button>
-                                    </form>
+                                <div class="flex flex-col md:flex-row items-end gap-2">
+                                    <div class="text-right">
+                                        <div>S/ <?= number_format($plato['precio'], 2) ?></div>
+                                        <form method="POST" action="acciones_plato.php" class="inline">
+                                            <input type="hidden" name="id" value="<?= $plato['id'] ?>">
+                                            <button type="submit" name="accion" value="eliminar" class="text-red-600 hover:underline text-sm">Eliminar</button>
+                                        </form>
+                                    </div>
+                                    <button 
+                                        type="button" 
+                                        class="ml-2 text-blue-600 text-sm underline hover:no-underline hover:text-blue-800"
+                                        onclick='abrirModalEditar(<?= json_encode($plato, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>
+                                        Editar
+                                    </button>
                                 </div>
                             </li>
                         <?php endforeach; ?>
@@ -100,7 +110,43 @@ $categorias = $stmt->fetchAll();
     </div>
 </main>
 
-<!-- Botón flotante responsive para agregar plato -->
+<!-- Modal para editar plato -->
+<div id="modalEditarPlato" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+    <div class="bg-white w-full max-w-md rounded-lg shadow-lg px-4 py-6 md:px-8 md:py-8 relative flex flex-col justify-center max-h-[90vh] overflow-y-auto">
+        <button type="button" id="cerrarModalEditar"
+            class="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl md:text-xl">&times;</button>
+        <h2 class="text-lg font-semibold mb-4">Editar plato</h2>
+        <form id="formEditarPlato" method="POST" action="acciones_plato.php" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="id" id="edit_id">
+            <div>
+                <label class="block mb-1 text-sm">Nombre:</label>
+                <input type="text" name="nombre" id="edit_nombre" class="border rounded w-full p-2" required>
+            </div>
+            <div>
+                <label class="block mb-1 text-sm">Descripción:</label>
+                <input type="text" name="descripcion" id="edit_descripcion" class="border rounded w-full p-2">
+            </div>
+            <div>
+                <label class="block mb-1 text-sm">Precio:</label>
+                <input type="number" step="0.01" name="precio" id="edit_precio" class="border rounded w-full p-2" required>
+            </div>
+            <div>
+                <label class="block mb-1 text-sm">Imagen actual:</label>
+                <img id="edit_img_actual" src="" alt="Imagen actual" class="w-32 h-24 object-cover rounded border mb-2">
+                <input type="file" name="imagen" accept="image/*" class="block w-full text-sm" />
+                <small class="text-gray-500">Si seleccionas una nueva imagen, reemplazará la actual.</small>
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" name="accion" value="editar"
+                    class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-lg text-sm font-medium transition hover:bg-blue-100">
+                    Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Botón flotante para agregar plato -->
 <button
     type="button"
     id="btnAgregarPlatoGlobal"
@@ -112,7 +158,7 @@ $categorias = $stmt->fetchAll();
     </svg>
 </button>
 
-<!-- Modal Formulario responsive y compacto -->
+<!-- Modal para agregar plato -->
 <div id="modalAgregarPlato"
     class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
     <div class="bg-white w-full max-w-md rounded-lg shadow-lg px-4 py-6 md:px-8 md:py-8 relative flex flex-col justify-center max-h-[90vh] overflow-y-auto">
@@ -151,19 +197,40 @@ $categorias = $stmt->fetchAll();
     </div>
 </div>
 
-<!-- Script para controlar el modal de agregar plato -->
+<!-- Script para modales y editar plato -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const btn = document.getElementById('btnAgregarPlatoGlobal');
-        const modal = document.getElementById('modalAgregarPlato');
-        const cerrar = document.getElementById('cerrarModalPlato');
+        // Modal agregar
+        const btnAgregar = document.getElementById('btnAgregarPlatoGlobal');
+        const modalAgregar = document.getElementById('modalAgregarPlato');
+        const cerrarAgregar = document.getElementById('cerrarModalPlato');
+        btnAgregar.addEventListener('click', () => modalAgregar.classList.remove('hidden'));
+        cerrarAgregar.addEventListener('click', () => modalAgregar.classList.add('hidden'));
+        modalAgregar.addEventListener('click', function(e) {
+            if (e.target === modalAgregar) modalAgregar.classList.add('hidden');
+        });
 
-        btn.addEventListener('click', () => modal.classList.remove('hidden'));
-        cerrar.addEventListener('click', () => modal.classList.add('hidden'));
-
-        // Cerrar modal al hacer click fuera del contenido
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) modal.classList.add('hidden');
+        // Modal editar
+        window.abrirModalEditar = function(plato) {
+            document.getElementById('modalEditarPlato').classList.remove('hidden');
+            document.getElementById('edit_id').value = plato.id;
+            document.getElementById('edit_nombre').value = plato.nombre;
+            document.getElementById('edit_descripcion').value = plato.descripcion;
+            document.getElementById('edit_precio').value = plato.precio;
+            let img = document.getElementById('edit_img_actual');
+            if(plato.imagen){
+                img.src = '/carta-digital/' + plato.imagen;
+                img.style.display = '';
+            } else {
+                img.src = '';
+                img.style.display = 'none';
+            }
+        };
+        document.getElementById('cerrarModalEditar').addEventListener('click', function(){
+            document.getElementById('modalEditarPlato').classList.add('hidden');
+        });
+        document.getElementById('modalEditarPlato').addEventListener('click', function(e){
+            if (e.target === this) this.classList.add('hidden');
         });
     });
 </script>

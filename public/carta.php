@@ -44,12 +44,13 @@ $categorias = $stmt->fetchAll();
                     $platos = $stmtPlatos->fetchAll();
 
                     foreach ($platos as $plato):
-                        $img_url = isset($plato['imagen']) && !empty($plato['imagen'])
-                            ? htmlspecialchars($plato['imagen'])
+                        $img_url = (isset($plato['imagen']) && !empty($plato['imagen']))
+                            ? '/' . ltrim($plato['imagen'], '/')
                             : 'https://via.placeholder.com/400x300.png?text=Producto';
+
                     ?>
                         <div class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition relative group">
-                            <img src="<?= $img_url ?>" alt="<?= htmlspecialchars($plato['nombre']) ?>" class="w-full h-48 object-cover">
+                            <img src="/carta-digital/<?= htmlspecialchars($plato['imagen']) ?>" alt="<?= htmlspecialchars($plato['nombre']) ?>" class="w-full h-48 object-cover">
                             <div class="p-4">
                                 <h3 class="text-lg font-bold text-gray-900 mb-1"><?= htmlspecialchars($plato['nombre']) ?></h3>
                                 <?php if (!empty($plato['descripcion'])): ?>
