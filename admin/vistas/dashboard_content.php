@@ -34,20 +34,7 @@ $disponibles = $limite - $total_locales;
 
     <!-- Título -->
     <h2 class="text-2xl font-bold text-[#3A1F0F] mb-2">Mis Locales</h2>
-
-    <!-- Info del plan -->
-    <div class="mb-6 p-4 bg-[#FFF5E1] border border-[#E94E2C]/20 rounded-lg text-sm text-[#3A1F0F]">
-        <p><strong>Plan actual:</strong> <?= ucfirst($plan) ?></p>
-        <p><strong>Locales usados:</strong> <?= $total_locales ?> / <?= $limite ?>
-            <?php if ($disponibles > 0): ?>
-                — <span class="text-green-600 font-semibold"><?= $disponibles ?>
-                    disponible<?= $disponibles > 1 ? 's' : '' ?></span>
-            <?php else: ?>
-                — <span class="text-red-600 font-semibold">Límite alcanzado</span>
-            <?php endif; ?>
-        </p>
-    </div>
-
+        <br>
     <!-- Formulario para agregar local -->
     <?php if ($disponibles > 0): ?>
         <!-- Botón para mostrar/ocultar formulario -->

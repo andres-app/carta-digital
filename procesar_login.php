@@ -24,7 +24,7 @@ if ($usuario && $password === $usuario['password']) {
     $_SESSION['rol'] = $usuario['rol'];
     $_SESSION['empresa_id'] = $usuario['empresa_id'];
 
-    $redirect = $usuario['rol'] === 'superadmin' ? 'superadmin/index.php' : 'admin/mis_locales.php';
+    $redirect = $usuario['rol'] === 'superadmin' ? 'superadmin/index.php' : 'admin/dashboard.php';
     header("Location: $redirect");
     exit;
 } else {
