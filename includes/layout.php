@@ -25,10 +25,7 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="text-center text-xs text-gray-500 py-6">
-        © <?= date('Y') ?> Carta Digital. Todos los derechos reservados.
-    </footer>
+
 
 </body>
 </html>

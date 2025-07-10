@@ -1,3 +1,3 @@
-<div class="mt-8 text-center text-sm text-gray-400">
+<footer class="mt-12 text-center text-xs text-gray-400 py-4">
     &copy; <?= date('Y') ?> Carta Digital. Todos los derechos reservados.
-</div>
+</footer>

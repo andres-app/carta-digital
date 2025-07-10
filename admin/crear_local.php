@@ -18,7 +18,7 @@ $stmt = $conn->prepare("SELECT COUNT(*) FROM locales WHERE empresa_id = ? AND sl
 $stmt->execute([$empresa_id, $slug]);
 if ($stmt->fetchColumn() > 0) {
     $_SESSION['mensaje_error'] = "El slug <strong>$slug</strong> ya existe en tus locales. Usa uno diferente.";
-    header("Location: dashboard.php");
+    header("Location: mis_locales.php");
     exit;
 }
 
@@ -34,7 +34,7 @@ $total_locales = $stmt->fetchColumn();
 
 if ($total_locales >= $limite) {
     $_SESSION['mensaje_error'] = "Has alcanzado el límite de locales para el plan <strong>$plan</strong>.";
-    header("Location: dashboard.php");
+    header("Location: mis_locales.php");
     exit;
 }
 
@@ -43,5 +43,5 @@ $stmt = $conn->prepare("INSERT INTO locales (empresa_id, nombre, slug) VALUES (?
 $stmt->execute([$empresa_id, $nombre, $slug]);
 
 $_SESSION['mensaje_exito'] = "El local <strong>$nombre</strong> fue creado exitosamente.";
-header("Location: dashboard.php");
+header("Location: mis_locales.php");
 exit;

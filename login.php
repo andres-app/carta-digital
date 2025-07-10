@@ -5,7 +5,7 @@ if (isset($_SESSION['usuario_id'])) {
     if ($_SESSION['rol'] === 'superadmin') {
         header("Location: superadmin/index.php");
     } else {
-        header("Location: admin/dashboard.php");
+        header("Location: admin/mis_locales.php");
     }
     exit;
 }

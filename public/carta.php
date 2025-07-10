@@ -18,12 +18,14 @@ $categorias = $stmt->fetchAll();
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Carta - <?= htmlspecialchars($local['nombre']) ?></title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
+
 <body class="bg-white text-gray-800 font-sans">
 
     <!-- Encabezado Fijo -->
@@ -42,8 +44,8 @@ $categorias = $stmt->fetchAll();
                     $platos = $stmtPlatos->fetchAll();
 
                     foreach ($platos as $plato):
-                        $img_url = isset($plato['imagen']) && !empty($plato['imagen']) 
-                            ? htmlspecialchars($plato['imagen']) 
+                        $img_url = isset($plato['imagen']) && !empty($plato['imagen'])
+                            ? htmlspecialchars($plato['imagen'])
                             : 'https://via.placeholder.com/400x300.png?text=Producto';
                     ?>
                         <div class="bg-white rounded-2xl overflow-hidden shadow hover:shadow-lg transition relative group">
@@ -55,7 +57,9 @@ $categorias = $stmt->fetchAll();
                                 <?php endif; ?>
                                 <div class="flex justify-between items-center">
                                     <span class="text-indigo-600 font-bold text-lg">S/ <?= number_format($plato['precio'], 2) ?></span>
-                                    <button class="bg-indigo-500 text-white rounded-full w-9 h-9 flex items-center justify-center text-xl hover:bg-indigo-600 transition shadow-md">+</button>
+                                    <button class="bg-indigo-500 text-white rounded-full w-9 h-9 flex items-center justify-center text-2xl leading-none hover:bg-indigo-600 transition shadow-md">
+                                        +
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -65,4 +69,5 @@ $categorias = $stmt->fetchAll();
         <?php endforeach; ?>
     </main>
 </body>
+
 </html>
