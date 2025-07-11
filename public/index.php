@@ -11,7 +11,6 @@ $restaurant_id = $_GET['r'] ?? 0;
 <head>
     <meta charset="UTF-8">
     <title>Carta Digital</title>
-    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white text-gray-800">
     <div class="max-w-4xl mx-auto p-4">
