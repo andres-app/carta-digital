@@ -97,7 +97,7 @@ $disponibles = $limite - $total_locales;
                         </a>
 
                         <!-- Ver -->
-                        <a href="/carta-digital/public/carta.php?slug=<?= urlencode($local['slug']) ?>" target="_blank"
+                        <a href="<?= $base_url ?>/public/carta.php?slug=<?= urlencode($local['slug']) ?>" target="_blank"
                             title="Ver carta"
                             class="flex items-center gap-2 bg-green-50 text-green-700 hover:bg-green-100 px-3 py-2 rounded-lg transition">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"

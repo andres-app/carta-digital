@@ -1,4 +1,12 @@
 <?php
+
+if (session_status() === PHP_SESSION_NONE) session_start();
+
+// Base URL dinámico para imágenes y assets:
+$base_url = dirname($_SERVER['SCRIPT_NAME']);
+if ($base_url === '/' || $base_url === '\\') $base_url = '';
+
+
 if (session_status() === PHP_SESSION_NONE)
     session_start();
 if (isset($_SESSION['usuario_id'])) {
@@ -18,7 +26,7 @@ if (isset($_SESSION['usuario_id'])) {
     <meta charset="UTF-8">
     <title>TuCarta | Iniciar Sesión</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-gradient-to-br from-[#FFF5E1] to-[#fbe7d3] min-h-screen flex items-center justify-center">
@@ -35,7 +43,7 @@ if (isset($_SESSION['usuario_id'])) {
         <div class="bg-[#FFF5E1]/90 backdrop-blur-md shadow-xl p-10 rounded-3xl w-full max-w-md text-center">
             <!-- Logo -->
             <div class="flex justify-center">
-                <img src="./assets/img/qarta_logo.png" alt="TuCarta Logo" class="w-48 h-48 object-contain">
+                <img src="assets/img/qarta_logo.png" alt="TuCarta Logo" class="w-48 h-48 object-contain">
             </div>
 
             <!-- Slogan -->
