@@ -32,6 +32,8 @@ $categorias = $stmt->fetchAll();
     <meta charset="UTF-8">
     <title>Editar Carta</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- TailwindCSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body class="bg-gray-50">
@@ -74,6 +76,8 @@ $categorias = $stmt->fetchAll();
                         $stmtPlatos = $conn->prepare("SELECT * FROM platos WHERE categoria_id = ?");
                         $stmtPlatos->execute([$cat['id']]);
                         $platos = $stmtPlatos->fetchAll();
+                        // Lógica para rutas de imagen
+                        $uploads_path = (strpos($_SERVER['HTTP_HOST'], 'localhost') !== false) ? '/carta-digital/uploads/' : '/uploads/';
                         ?>
                         <ul class="space-y-2">
                             <?php foreach ($platos as $plato): ?>
@@ -81,9 +85,14 @@ $categorias = $stmt->fetchAll();
                                     <div>
                                         <strong><?= htmlspecialchars($plato['nombre']) ?></strong><br>
                                         <small class="text-gray-500"><?= htmlspecialchars($plato['descripcion']) ?></small>
+                                        <?php
+                                        $img_src = trim($plato['imagen'] ?? '');
+                                        $img_src = preg_replace('#^/?uploads/#i', '', $img_src);
+                                        $img_url = $uploads_path . htmlspecialchars($img_src);
+                                        ?>
                                         <?php if ($plato['imagen']): ?>
                                             <div class="mt-2">
-                                                <img src="/carta-digital/<?= htmlspecialchars($plato['imagen']) ?>" alt="Imagen de <?= htmlspecialchars($plato['nombre']) ?>" class="w-24 h-20 object-cover rounded border">
+                                                <img src="<?= $img_url ?>" alt="Imagen de <?= htmlspecialchars($plato['nombre']) ?>" class="w-24 h-20 object-cover rounded border">
                                             </div>
                                         <?php endif; ?>
                                     </div>
@@ -123,7 +132,6 @@ $categorias = $stmt->fetchAll();
                                             </button>
                                         </form>
                                     </div>
-
                                 </li>
                             <?php endforeach; ?>
                         </ul>
@@ -241,8 +249,10 @@ $categorias = $stmt->fetchAll();
                 document.getElementById('edit_descripcion').value = plato.descripcion;
                 document.getElementById('edit_precio').value = plato.precio;
                 let img = document.getElementById('edit_img_actual');
+                let uploadsPath = (location.hostname === 'localhost') ? '/carta-digital/uploads/' : '/uploads/';
                 if (plato.imagen) {
-                    img.src = '/carta-digital/' + plato.imagen;
+                    let src = plato.imagen.replace(/^\/?uploads\//i, '');
+                    img.src = uploadsPath + src;
                     img.style.display = '';
                 } else {
                     img.src = '';
