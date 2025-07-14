@@ -17,13 +17,12 @@ $stmt = $conn->prepare("SELECT * FROM usuarios WHERE email = ?");
 $stmt->execute([$email]);
 $usuario = $stmt->fetch();
 
-// Comparar credenciales (modo simple)
-if ($usuario && $password === $usuario['password']) {
+// Comparar credenciales
+if ($usuario && password_verify($password, $usuario['password'])) {
     $_SESSION['usuario_id'] = $usuario['id'];
     $_SESSION['nombre'] = $usuario['nombre'];
     $_SESSION['rol'] = $usuario['rol'];
     $_SESSION['empresa_id'] = $usuario['empresa_id'];
-
     $redirect = $usuario['rol'] === 'superadmin' ? 'superadmin/index.php' : 'admin/dashboard.php';
     header("Location: $redirect");
     exit;

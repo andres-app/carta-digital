@@ -81,6 +81,10 @@ if (isset($_SESSION['usuario_id'])) {
 
                     Iniciar Sesión
                 </button>
+                <a href="registro.php" class="block mt-4 text-sm text-indigo-700 hover:underline text-center">
+                    ¿No tienes cuenta? Regístrate aquí
+                </a>
+
             </form>
         </div>
 
