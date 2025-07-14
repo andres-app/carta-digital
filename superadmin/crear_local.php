@@ -8,23 +8,34 @@ if (!isset($_SESSION['usuario_id']) || $_SESSION['rol'] !== 'superadmin') {
 
 require_once '../includes/db.php';
 
-$empresa_id = $_POST['empresa_id'];
-$nombre = trim($_POST['nombre']);
-$slug = trim($_POST['slug']);
+// Validaciones básicas
+$empresa_id = $_POST['empresa_id'] ?? null;
+$nombre = trim($_POST['nombre'] ?? '');
+$slug = trim(strtolower($_POST['slug'] ?? ''));
 
-// Validar duplicado de slug
+if (!$empresa_id || !is_numeric($empresa_id) || !$nombre || !$slug) {
+    $_SESSION['mensaje_error'] = "Datos incompletos para crear el local.";
+    header("Location: ver_empresa.php?id=" . urlencode($empresa_id));
+    exit;
+}
+
+// Sanitiza el nombre (el slug lo puedes filtrar para solo permitir a-z, 0-9 y guion si quieres)
+$nombre = htmlspecialchars($nombre, ENT_QUOTES, 'UTF-8');
+$slug = preg_replace('/[^a-z0-9\-]/', '', $slug);
+
+// Validar duplicado de slug para esta empresa
 $stmt = $conn->prepare("SELECT COUNT(*) FROM locales WHERE empresa_id = ? AND slug = ?");
 $stmt->execute([$empresa_id, $slug]);
 if ($stmt->fetchColumn() > 0) {
     $_SESSION['mensaje_error'] = "El slug <strong>$slug</strong> ya existe para esta empresa.";
-    header("Location: ver_empresa.php?id=$empresa_id");
+    header("Location: ver_empresa.php?id=" . urlencode($empresa_id));
     exit;
 }
 
-// Insertar
+// Insertar local
 $stmt = $conn->prepare("INSERT INTO locales (empresa_id, nombre, slug) VALUES (?, ?, ?)");
 $stmt->execute([$empresa_id, $nombre, $slug]);
 
 $_SESSION['mensaje_exito'] = "El local <strong>$nombre</strong> fue creado correctamente.";
-header("Location: ver_empresa.php?id=$empresa_id");
+header("Location: ver_empresa.php?id=" . urlencode($empresa_id));
 exit;

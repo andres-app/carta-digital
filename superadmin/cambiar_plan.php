@@ -11,10 +11,18 @@ require_once '../includes/db.php';
 $empresa_id = $_POST['empresa_id'] ?? null;
 $nuevo_plan = $_POST['plan'] ?? null;
 
-if ($empresa_id && in_array($nuevo_plan, ['gratis', 'basico', 'premium'])) {
+// Validar inputs
+if (
+    $empresa_id && is_numeric($empresa_id) &&
+    in_array($nuevo_plan, ['gratis', 'basico', 'premium'])
+) {
     $stmt = $conn->prepare("UPDATE empresas SET plan = ? WHERE id = ?");
     $stmt->execute([$nuevo_plan, $empresa_id]);
+    $success = true;
+} else {
+    $success = false;
 }
 
-header("Location: ver_empresa.php?id=$empresa_id&exito=1");
+// Redirige, mostrando mensaje solo si fue exitoso
+header("Location: ver_empresa.php?id=" . urlencode($empresa_id) . ($success ? "&exito=1" : ""));
 exit;
