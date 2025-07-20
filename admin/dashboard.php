@@ -1,6 +1,7 @@
 <?php
 session_start();
 require "../includes/header.php";
+require "../includes/sidebar.php";
 require_once '../includes/db.php';
 require_once '../includes/helpers.php';
 
@@ -25,7 +26,7 @@ $total_platos = $stmt->fetchColumn();
 $nombre = $_SESSION['nombre'] ?? 'Usuario';
 ?>
 
-<main class="ml-60 min-h-screen px-4 py-10">
+<main class="min-h-screen px-4 py-10 transition-all duration-300 md:ml-60 w-full max-w-5xl mx-auto">
     <div class="max-w-6xl mx-auto space-y-8">
 
         <!-- Bienvenida -->

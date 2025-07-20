@@ -8,17 +8,19 @@
 </head>
 <body class="bg-gray-50 text-[#3A1F0F]">
 
-    <!-- Espacio para no pegar contenido al header -->
-    <div class="h-4"></div>
+<?php include 'header.php'; ?>
 
-    <!-- Contenido principal con caja blanca -->
-    <main class="max-w-6xl mx-auto px-4 pb-24">
-        <div class="bg-white rounded-xl shadow p-6">
+<div class="flex">
+    <?php include 'sidebar.php'; ?>
+
+    <main class="flex-1 px-4 py-10 transition-all duration-300 md:ml-60">
+        <div class="bg-white rounded-xl shadow p-6 max-w-6xl mx-auto">
             <?php include $contenido; ?>
         </div>
     </main>
+</div>
 
-
+<?php include 'footer.php'; ?>
 
 </body>
 </html>
